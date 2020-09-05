@@ -196,12 +196,20 @@ class Connection(Thread):
         """Interrupt pending queries."""
         return self._conn.interrupt()
 
-    async def create_function(self, name: str, num_params: int, func: Callable) -> None:
+    async def create_function(
+        self, name: str, num_params: int, func: Callable, deterministic: bool = False,
+    ) -> None:
         """Create user-defined function that can be later used
         within SQL statements. Must be run within the same thread
         that query executions take place so instead of executing directly
         against the connection, we defer this to `run` function."""
-        await self._execute(self._conn.create_function, name, num_params, func)
+        await self._execute(
+            self._conn.create_function,
+            name,
+            num_params,
+            func,
+            deterministic=deterministic,
+        )
 
     @property
     def in_transaction(self) -> bool:
